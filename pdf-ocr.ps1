@@ -27,8 +27,19 @@ function Install-ScoopPackage {
         try {
             # Check if Scoop is installed
             if (!(Get-Command scoop -ErrorAction SilentlyContinue)) {
-                Write-Error "Scoop is not installed. Please install Scoop from https://scoop.sh"
-                exit 1
+                Write-Error "Scoop is not installed. Attempting to install Scoop..."
+                # Set execution policy to allow scripts
+                Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+                # Install Scoop
+                Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+                # Verify Scoop installation
+                if (!(Get-Command scoop -ErrorAction SilentlyContinue)) {
+                    Write-Error "Scoop installation failed. Please check your internet connection and try again."
+                    exit 1
+                }
+                Write-Host "[+] Scoop successfully installed." -ForegroundColor Green
+                # Refresh Path for the current session
+                $env:PATH += ";$env:USERPROFILE\scoop\shims"
             }
             
             scoop install $Package
