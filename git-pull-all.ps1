@@ -44,9 +44,6 @@ function Install-ScoopPackage {
             exit 1
         }
     }
-    else {
-        Write-Host "[$Command] is already installed." -ForegroundColor Green
-    }
 }
 
 # Ensure git is installed
